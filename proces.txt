@@ -1,0 +1,100 @@
+| --Шаг 1 — Создай папку и виртуальное окружение--|
+
+#mkdir krisha
+#cd krisha
+#python -m venv venv
+#venv\Scripts\activate # Windows
+
+| --Шаг 2 — Установи пакеты--|
+
+#pip install django psycopg2-binary pillow django-cors-headers 
+
+Описание библиотек
+django: Полнофункциональный веб-фреймворк. Он предоставляет архитектуру «из коробки»: административную панель, 
+систему аутентификации, ORM (взаимодействие с базой данных) и маршрутизацию запросов.
+
+psycopg2-binary: Адаптер базы данных PostgreSQL для языка Python. Он позволяет Django «общаться» с PostgreSQL,
+отправлять SQL-запросы и получать данные. Версия binary содержит уже скомпилированные компоненты, что упрощает установку.
+
+pillow: Библиотека для обработки изображений. В Django она необходима для работы с полями моделей ImageField. 
+Она позволяет изменять размер, обрезать, сохранять и проверять форматы загружаемых файлов.
+
+django-cors-headers: Приложение-прослойка (middleware) для управления CORS (Cross-Origin Resource Sharing). 
+Оно нужно, если ваш бэкенд и фронтенд (например, на React или Vue) находятся на разных доменах или портах.
+Библиотека добавляет нужные HTTP-заголовки, чтобы браузер не блокировал запросы к API.
+
+| --Шаг 3 — Создай проект и приложение--|
+
+#django-admin startproject krisha_project
+#python manage.py startapp ads
+
+| --Шаг 4 — Создай БД в PostgreSQL (через pgAdmin или psql)--|
+
+-- create database krisha_db
+-- create user project_admin with PASSWORD 'plkoplko123'
+-- grant all privileges on database krisha_db to project_admin
+
+После нужно обновить базу данных
+
+| --Шаг 5 — Поменяй только одно место в settings.py — замени SQLite на PostgreSQL:--|
+
+# Было:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# Стало:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'krisha_db',
+        'USER': 'krisha_user',
+        'PASSWORD': 'yourpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+
+----И добавь в самый конец settings.py:----
+
+INSTALLED_APPS += ['corsheaders', 'ads']
+
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware']
+CorsMiddleware: Включает «фильтр» на входе в сервер. 
+Он перехватывает каждый входящий HTTP-запрос раньше остальных и проверяет,
+разрешено ли источнику (браузеру) обращаться к серверу.
+
+CORS_ALLOW_ALL_ORIGINS = True
+Разрешает запросы к вашему API с любых доменов и портов.
+Это критически важно на этапе разработки, чтобы фронтенд 
+(например, на React или Vue) мог свободно получать данные от бэкенда без блокировки со стороны браузера.
+
+
+CORS_ALLOW_HEADERS = ['content-type', 'x-user-id']
+
+content-type: Необходим для передачи данных в формате JSON (стандарт для веб-приложений).
+x-user-id: Позволяет отправлять ваш уникальный заголовок для идентификации пользователя или специфической логики вашего проекта.
+
+TEMPLATES = [{'DIRS': [BASE_DIR / 'templates'],}]
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [    BASE_DIR / "static",]
+MEDIA_URL='/media/'
+MEDIA_ROOT = BASE_DIR / "media"
+
+| --Шаг 6 — Создай нужные папки--|
+
+# mkdir templates
+# mkdir -p static/css
+# mkdir -p static/js
+# mkdir -p media/images/ads
+# mkdir -p media/images/avatars
+
+| --Шаг 7 — Проверь что всё работает--|
+
+# python manage.py migrate
+# python manage.py runserver
