@@ -1,7 +1,7 @@
 | --Шаг 1 — Создай папку и виртуальное окружение--|
 
-#mkdir krisha
-#cd krisha
+#mkdir kolosa
+#cd kolosa
 #python -m venv venv
 #venv\Scripts\activate # Windows
 
@@ -25,14 +25,14 @@ django-cors-headers: Приложение-прослойка (middleware) для
 
 | --Шаг 3 — Создай проект и приложение--|
 
-#django-admin startproject krisha_project
+#django-admin startproject kolosa_project
 #python manage.py startapp ads
 
 | --Шаг 4 — Создай БД в PostgreSQL (через pgAdmin или psql)--|
 
--- create database krisha_db
+-- create database kolosa
 -- create user project_admin with PASSWORD 'plkoplko123'
--- grant all privileges on database krisha_db to project_admin
+-- grant all privileges on database kolosa_db to project_admin
 
 После нужно обновить базу данных
 
@@ -50,8 +50,8 @@ DATABASES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'krisha_db',
-        'USER': 'krisha_user',
+        'NAME': 'kolosa_db',
+        'USER': 'kolosa_user',
         'PASSWORD': 'yourpassword',
         'HOST': 'localhost',
         'PORT': '5432',
